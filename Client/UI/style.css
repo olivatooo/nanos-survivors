@@ -1,0 +1,126 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Lucida Console";
+  margin: 10px;
+  color: rgb(207, 207, 207);
+}
+
+div#xp {
+  height: 50px;
+  background-color: #13222f;
+  border-radius: 5px;
+  position: relative;
+}
+
+div#xp-fill {
+  height: 100%;
+  width: 0%;
+  background-color: #3d553a;
+  border-radius: 5px;
+  position: relative;
+}
+
+span#level {
+  position: absolute;
+  top: 0;
+  margin: 10px;
+  text-align: center;
+  width: 100%;
+  line-height: 30px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+div#time {
+  margin-top: 10px;
+  font-size: 25px;
+  float: right;
+}
+
+div#health-container {
+  margin-top: 10px;
+}
+
+span#health,
+span#health-empty {
+  width: 50px;
+  height: 50px;
+  background-image: url("Images/heart.webp");
+  display: inline-block;
+  background-size: 100%;
+}
+
+span#health-empty {
+  filter: grayscale(1);
+}
+
+div#ammo-container {
+  margin-top: 10px;
+}
+
+div#ammo-container img {
+  height: 40px;
+  margin: 0 10px 0 5px;
+  vertical-align: middle;
+  filter: brightness(0.8);
+}
+
+span#ammo {
+  font-size: 30px;
+  vertical-align: middle;
+}
+
+.center {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+.column {
+  float: left;
+  width: 33.33%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+#level-up {
+  height: 300px;
+  position: fixed;
+  bottom: 0;
+  left: 25%;
+}
+
+.container {
+  display: flex;
+}
+
+.section {
+  flex: 1; /*grow*/
+  border: 1px dashed;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+}
+
+.icon {
+  height: 64px;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /*breakpoint*/
+  .container {
+    flex-direction: column;
+  }
+}
