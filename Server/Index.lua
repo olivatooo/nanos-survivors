@@ -1,3 +1,5 @@
+Server.LoadPackage("default-weapons")
+
 XPPickUpRange = 300
 Package.Require("Skills.lua")
 
@@ -37,9 +39,34 @@ function SpawnPlayer(player, location, rotation)
 
   new_char:Subscribe("Death",
     function(self, last_damage_taken, last_bone_damaged, damage_type_reason, hit_from_direction, instigator, causer)
+      
+      -- Get player name and broadcast death message
+      local dead_player = self:GetPlayer()
+      if dead_player then
+        local death_messages = {
+          "<red>%s</> got absolutely destroyed! What a noob!",
+          "<red>%s</> couldn't handle the heat and rage quit life",
+          "<red>%s</> just got deleted faster than my browser history",
+          "<red>%s</> has been eliminated (and embarrassed)",
+          "<red>%s</> should probably stick to playing Minecraft",
+          "<red>%s</> just became zombie food. Not their proudest moment",
+          "<red>%s</> died. Have they tried NOT dying?",
+          "<red>%s</> found out the hard way that this isn't a walking simulator"
+        }
+        local random_message = death_messages[math.random(#death_messages)]
+        local players_remaining = 0
+        for _, char in pairs(Character.GetAll()) do
+          if char:IsValid() and char:GetTeam() == 1 and char:GetHealth() > 0 then
+            players_remaining = players_remaining + 1
+          end
+        end
+        Server.BroadcastChatMessage(string.format(random_message, dead_player:GetName()))
+        Server.BroadcastChatMessage("<yellow>" .. players_remaining .. " survivors remaining. Who's next?</>")
+      end
+
       self:Destroy()
     end)
-  local weapon = AK47()
+  local weapon = Glock()
   weapon:SetDamage(1)
   weapon:SetSpread(-20)
   weapon:SetAmmoSettings(100000, 100000)
@@ -85,23 +112,30 @@ function SpawnEnemy()
   -- TODO get near player
   local near_player_character = GetRandomHero()
 
+  if not near_player_character then
+    return
+  end
+
   -- Gets random location around the player to spawn the enemy
   local random_rotation = Rotator.Random()
   random_rotation.Pitch = 0
   local enemy_location = near_player_character:GetLocation() + random_rotation:RotateVector(distance_to_spawn)
 
+
   -- TODO get enemy health
   -- TODO random groan
   local health = (math.random(NanoSurvivors.CurrentLevel) * #Player.GetAll())
   local meshes = {
-    "zombie-pack-v1::SK_ZombieAB_a",
-    "zombie-pack-v1::SK_ZombieAB_b",
-    "zombie-pack-v1::SK_ZombieAC_A",
-    "zombie-pack-v1::SK_ZombieAC_B",
-    "zombie-pack-v1::SK_ZombieAD_One",
-    "zombie-pack-v1::SK_ZombieAD_OneMesh",
-    "zombie-pack-v1::SK_ZombieAEv1",
-    "zombie-pack-v1::SK_ZombieAEv2",
+    -- "zombie-pack-v1::SK_ZombieAB_a",
+    -- "zombie-pack-v1::SK_ZombieAB_b",
+    -- "zombie-pack-v1::SK_ZombieAC_A",
+    -- "zombie-pack-v1::SK_ZombieAC_B",
+    -- "zombie-pack-v1::SK_ZombieAD_One",
+    -- "zombie-pack-v1::SK_ZombieAD_OneMesh",
+    -- "zombie-pack-v1::SK_ZombieAEv1",
+    -- "zombie-pack-v1::SK_ZombieAEv2",
+    "nanos-world::SK_Mannequin",
+
   }
   local enemy = Character(enemy_location, Rotator(), meshes[math.random(#meshes)], CollisionType.Normal, true, health)
   enemy:SetTeam(2)
@@ -115,8 +149,8 @@ function SpawnEnemy()
     enemy:SetScale(Vector((NanoSurvivors.CurrentLevel / 10) + 2))
     enemy:SetMaterialColorParameter("Tint", Color(255, 0, 0))
   end
-  enemy:SetPainSound("zombies-voice-sfx::A_Zombies_Hit_Cue")
-  enemy:SetDeathSound("zombies-voice-sfx::A_Zombies_Death_Cue")
+  --enemy:SetPainSound("zombies-voice-sfx::A_Zombies_Hit_Cue")
+  --enemy:SetDeathSound("zombies-voice-sfx::A_Zombies_Death_Cue")
   enemy:PlayAnimation("nanos-world::A_Zombie_Chase_Loop", AnimationSlotType.UpperBody, true)
 
   -- Makes enemy follow the player
@@ -144,18 +178,19 @@ function SpawnEnemy()
   fov:AttachTo(enemy, AttachmentRule.SnapToTarget, nil, 0)
   fov:SetRelativeLocation(Vector(50, 0, 0))
   fov:Subscribe("BeginOverlap", function(trigger, actor_triggering)
-    if actor_triggering ~= nil and actor_triggering:GetType() == "Character" and actor_triggering:GetTeam() ~= 2 then
+    if actor_triggering ~= nil and actor_triggering:GetClass().GetName() == "Character" and actor_triggering:GetTeam() ~= 2 then
       enemy:PlayAnimation("nanos-world::AM_Mannequin_Melee_Slash_Attack", AnimationSlotType.FullBody, false, 0.25, 0.25,
         1, false)
       enemy:StopMovement()
       Timer.SetTimeout(function(_enemy)
+        if not _enemy:IsValid() then return end
+        if not _enemy:GetHealth() or _enemy:GetHealth() <= 0 then return end
         local hero = GetRandomHero()
-        local damage = Trigger(Vector(0, 100, -100000), Rotator(),
-          Vector(50 * enemy:GetScale().X, 50 * enemy:GetScale().Y, 400), TriggerType.Box, false, Color(1, 0, 0))
+        local damage = Trigger(Vector(0, 100, -100000), Rotator(), Vector(50 * _enemy:GetScale().X, 50 * _enemy:GetScale().Y, 400), TriggerType.Box, false, Color(1, 0, 0))
         damage:AttachTo(_enemy, AttachmentRule.SnapToTarget, nil, 0)
         damage:SetRelativeLocation(Vector(50, 0, 0))
         damage:Subscribe("BeginOverlap", function(trigger, actor_triggering)
-          if actor_triggering:GetType() == "Character" and actor_triggering:GetTeam() ~= 2 then
+          if actor_triggering and actor_triggering:GetClass().GetName() == "Character" and actor_triggering:GetTeam() ~= 2 then
             actor_triggering:ApplyDamage(10, nil, DamageType.Punch)
           end
         end)
@@ -181,7 +216,7 @@ function SpawnXP(location, amount)
 
   -- When Character passes through, Grab the XP
   trigger:Subscribe("BeginOverlap", function(self, object)
-    if (NanosUtils.IsA(object, Character)) then
+    if object and (object:IsA( Character)) then
       local player = object:GetPlayer()
       if (not player) then return end
       GrabXP(player, self)
@@ -221,13 +256,13 @@ function UpdateXP(location, amount)
     NanoSurvivors.CurrentXP = 0
     NanoSurvivors.MaxXP = NanoSurvivors.MaxXP + 10
 
-    Package.Log("Level up to %d! %d XP needed.", NanoSurvivors.CurrentLevel, NanoSurvivors.MaxXP)
+    Console.Log("Level up to %d! %d XP needed.", NanoSurvivors.CurrentLevel, NanoSurvivors.MaxXP)
     for _, player in pairs(Player.GetAll()) do
       local char = player:GetControlledCharacter()
       char:SetValue("NanoSurvivors.Level", NanoSurvivors.Level)
     end
 
-    Events.BroadcastRemote("SpawnSound", location, "package///nano-survivors/Client/SFX/level_up.ogg", true, 1, 1)
+    Events.BroadcastRemote("SpawnSound", location, "package://nanos-survivors/Client/SFX/level_up.ogg", true, 1, 1)
     Events.BroadcastRemote("UpdateLevel", NanoSurvivors.CurrentLevel)
     Events.BroadcastRemote("LevelUpSkills", GetSetOfSkills())
   end
@@ -236,7 +271,7 @@ function UpdateXP(location, amount)
   Events.BroadcastRemote("UpdateXP", NanoSurvivors.CurrentXP, NanoSurvivors.MaxXP)
 end
 
-Character.Subscribe("MoveCompleted", function(self, success)
+Character.Subscribe("MoveComplete", function(self, success)
   -- explode?
 end)
 
@@ -247,3 +282,62 @@ Timer.SetInterval(function()
     SpawnEnemies()
   end
 end, 2000)
+
+local last_player_time = os.time()
+
+Timer.SetInterval(function()
+  if #Player.GetAll() == 0 then
+    if os.time() - last_player_time >= 300 then -- 5 minutes = 300 seconds
+      Server.Restart()
+    end
+  else
+    last_player_time = os.time()
+  end
+end, 1000)
+
+
+Timer.SetInterval(function()
+  -- Check if any players are alive
+  local all_dead = true
+  for _, player in pairs(Player.GetAll()) do
+    local char = player:GetControlledCharacter()
+    if char and char:IsValid() and char:GetHealth() > 0 then
+      all_dead = false
+      break
+    end
+  end
+
+  if all_dead and #Player.GetAll() > 0 then
+    -- Announce game stats
+    Server.BroadcastChatMessage("<red>Game Over!</>")
+    Server.BroadcastChatMessage(string.format("<yellow>Level Reached: %d</>", NanoSurvivors.CurrentLevel))
+    Server.BroadcastChatMessage("<yellow>Restarting in 5 seconds...</>")
+
+    -- Count down and restart
+    Timer.SetTimeout(function()
+      Server.BroadcastChatMessage("5...")
+    end, 0)
+
+    Timer.SetTimeout(function() 
+      Server.BroadcastChatMessage("4...")
+    end, 1000)
+
+    Timer.SetTimeout(function()
+      Server.BroadcastChatMessage("3...")
+    end, 2000)
+
+    Timer.SetTimeout(function()
+      Server.BroadcastChatMessage("2...")
+    end, 3000)
+
+    Timer.SetTimeout(function()
+      Server.BroadcastChatMessage("1...")
+    end, 4000)
+
+    Timer.SetTimeout(function()
+      Server.Restart()
+    end, 5000)
+  end
+end, 10000)
+
+

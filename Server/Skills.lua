@@ -12,12 +12,12 @@ function RegisterSkill(skill_title, skill_description, skill_icon, skill_functio
     ID = SkillID
   })
   SkillID = SkillID + 1
-  Package.Log("Registered Skill Title: " .. skill_title)
+  Console.Log("Registered Skill Title: " .. skill_title)
   if DEBUG then
-    Package.Log("Registered Skill Description: " .. skill_description)
-    Package.Log("Registered Skill Icon: " .. skill_icon)
-    Package.Log(skill_function)
-    Package.Log("")
+    Console.Log("Registered Skill Description: " .. skill_description)
+    Console.Log("Registered Skill Icon: " .. skill_icon)
+    Console.Log(skill_function)
+    Console.Log("")
   end
 end
 
@@ -154,7 +154,7 @@ function BallOfFire(character)
   fire_damage = fire_damage + 2
   character:SetValue("FireDamage", fire_damage)
   local ball_of_fire = Timer.SetInterval(function(_character)
-    Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/fireball.ogg", true, 0.2, 1)
+    Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/fireball.ogg", true, 0.2, 1)
     local ball_effect = StaticMesh(
       _character:GetLocation(),
       Rotator(),
@@ -170,7 +170,7 @@ function BallOfFire(character)
       Color(1, 0, 0))
     ball_damage:Subscribe("BeginOverlap", function(_, zombie)
       if IsAZombie(zombie) then
-        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/flesh_hit.ogg", true, 0.2,
+        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/flesh_hit.ogg", true, 0.2,
           1.5)
         zombie:ApplyDamage(character:GetValue("FireDamage"))
         Particle(
@@ -197,7 +197,7 @@ RegisterSkill("Fire Wand", "Randomly shoots a ball of fire, or increase the numb
 
 function BallOfIce(character)
   local ball_of_fire = Timer.SetInterval(function(_character)
-    Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/fireball.ogg", true, 0.2, 1)
+    Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/fireball.ogg", true, 0.2, 1)
     local ball_effect = StaticMesh(
       _character:GetLocation(),
       Rotator(),
@@ -213,7 +213,7 @@ function BallOfIce(character)
       Color(1, 0, 0))
     ball_damage:Subscribe("BeginOverlap", function(_, zombie)
       if IsAZombie(zombie) then
-        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/flesh_hit.ogg", true, 0.2, 2)
+        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/flesh_hit.ogg", true, 0.2, 2)
         zombie:SetSpeedMultiplier(0.5)
         zombie:ApplyDamage(1)
       end
@@ -238,7 +238,7 @@ function LightningArc(character)
   local zap = Timer.SetInterval(function(_character)
     local zombie = Character.GetAll()[math.random(#Character.GetAll())]
     if IsAZombie(zombie) then
-      Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/zap.ogg", true, 0.2, 1)
+      Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/zap.ogg", true, 0.2, 1)
       local beam_particle = Particle(Vector(), Rotator(), "nanos-world::P_Beam", false, true)
       beam_particle:AttachTo(_character, AttachmentRule.SnapToTarget, "muzzle")
       beam_particle:SetParameterColor("BeamColor", Color(0, 0, 10000, 1))
@@ -256,7 +256,7 @@ RegisterSkill("Lightning Arc", "Zap Random Enemies! Create more arcs and increas
   LightningArc)
 
 function AerialSupport(character)
-  Package.Log(character)
+  Console.Log(character)
   local choppa = Timer.SetInterval(function(_character)
     local heli = Character(Vector(math.random(-1000, 3000), math.random(-1000, 3000), 5000), Rotator(0, 0, 0),
       "nanos-world::SK_Mannequin")
@@ -290,7 +290,7 @@ function EnergyBall(character)
   energy_damage = energy_damage + 4
   character:SetValue("ExplosionDamage", energy_damage)
   Timer.SetInterval(function(_character)
-    Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/fireball.ogg", true, 0.2, 0.5)
+    Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/fireball.ogg", true, 0.2, 0.5)
     local zombie = Character.GetAll()[math.random(#Character.GetAll())]
     if IsAZombie(zombie) then
       local energy_ball = StaticMesh(_character:GetLocation() + Vector(0, 0, 15000), Rotator(), "nanos-world::SM_Sphere")
@@ -361,7 +361,7 @@ function BallOfCoal(character)
   coal_damage = coal_damage + 10
   character:SetValue("CoalDamage", coal_damage)
   local ball_of_fire = Timer.SetInterval(function(_character)
-    Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/fireball.ogg", true, 0.2, 0.8)
+    Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/fireball.ogg", true, 0.2, 0.8)
     local ball_effect = StaticMesh(
       _character:GetLocation(),
       Rotator(),
@@ -384,7 +384,7 @@ function BallOfCoal(character)
           true, -- Auto Destroy?
           true  -- Auto Activate?
         )
-        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/flesh_hit.ogg", true, 0.2, 1)
+        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/flesh_hit.ogg", true, 0.2, 1)
         s:Destroy()
         ball_effect:Destroy()
       end
@@ -401,7 +401,7 @@ function HydraShot(character)
   local wep = character:GetPicked()
   wep:Subscribe("Fire", function(self, shooter)
     if math.random(100) > 90 then
-      Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/strong_hit.ogg", true, 0.5, 1)
+      Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/strong_hit.ogg", true, 0.5, 1)
       local coin = Prop(
         character:GetLocation(),
         Rotator(),
@@ -449,7 +449,7 @@ function SixthTheLuck(character)
     local ca = wep:GetValue("SixthTheLuck_Critical") or 1
     if six == 6 then
       weapon:SetValue("OriginalDamage", weapon:GetDamage())
-      Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/hit_distance.ogg", true, 0.8,
+      Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/hit_distance.ogg", true, 0.8,
         1)
       wep:SetDamage(ca * wep:GetDamage())
     end
@@ -474,9 +474,9 @@ function DigitalShockwave(character)
   local shock = Timer.SetInterval(function(_character, _radius)
     local wave = Trigger(_character:GetLocation(), Rotator(), Vector(_radius), TriggerType.Sphere, false, Color(1, 0, 0))
     wave:Subscribe("BeginOverlap", function(_, zombie)
-      if IsAZombie(zombie) then
+      if zombie and IsAZombie(zombie) then
         zombie:ApplyDamage(character:GetValue("DigitalShockwave"))
-        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/digital.ogg", true, 0.3, 1)
+        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/digital.ogg", true, 0.3, 1)
       end
     end)
     digital = StaticMesh(
@@ -515,7 +515,7 @@ function FlameTunnel(character)
     local flame_tunnel = Trigger(_character:GetLocation(), Rotator(), 100, TriggerType.Sphere, false, Color(1, 0, 0))
     flame_tunnel:Subscribe("BeginOverlap", function(_, zombie)
       if IsAZombie(zombie) then
-        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/flesh_hit.ogg", true, 0.2, 1)
+        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/flesh_hit.ogg", true, 0.2, 1)
         if next(zombie:GetAttachedEntities()) == nil then
           zombie:ApplyDamage(character:GetValue("FlameTunnel"))
           zombie:SetMaterialColorParameter("Tint", Color(255, 0, 0))
@@ -552,10 +552,10 @@ function BreathOfFire(character)
   character:SetValue("FlameTunnel", flame_tunnel_damage)
   local flame_damage = Timer.SetInterval(function(_character)
     local flame_tunnel = Trigger(_character:GetLocation(), Rotator(), 100, TriggerType.Sphere, false, Color(1, 0, 0))
-    Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/fire_breath.ogg", true, 0.2, 1)
+    Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/fire_breath.ogg", true, 0.2, 1)
     flame_tunnel:Subscribe("BeginOverlap", function(_, zombie)
       if IsAZombie(zombie) then
-        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/flesh_hit.ogg", true, 0.2, 1)
+        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/flesh_hit.ogg", true, 0.2, 1)
         if next(zombie:GetAttachedEntities()) == nil then
           zombie:ApplyDamage(character:GetValue("FlameTunnel"))
           zombie:SetMaterialColorParameter("Tint", Color(255, 0, 0))
@@ -645,7 +645,7 @@ function TeslaCoil(character)
   trigger:Subscribe("BeginOverlap", function(_, zombie)
     if IsAZombie(zombie) then
       local zap = Timer.SetInterval(function()
-        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/zap.ogg", true, 0.5, 1.6)
+        Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/zap.ogg", true, 0.5, 1.6)
         local beam_particle = Particle(Vector(), Rotator(), "nanos-world::P_Beam", false, true)
         beam_particle:AttachTo(tesla_coil, AttachmentRule.SnapToTarget, "muzzle")
         beam_particle:SetParameterColor("BeamColor", Color(0, 0, 10000, 1))
@@ -688,7 +688,7 @@ function RingOfFire(character)
   local trigger = Trigger(location, Rotator(), 200, TriggerType.Sphere, false, Color(0, 0, 1))
   trigger:Subscribe("BeginOverlap", function(_, zombie)
     if IsAZombie(zombie) then
-      Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/fire_breath.ogg", true, 0.8,
+      Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/fire_breath.ogg", true, 0.8,
         1.6)
       zombie:ApplyDamage(character:GetValue("FireTower"))
     end
@@ -730,7 +730,7 @@ function TheWorld(character)
         m9:TranslateTo(zombie:GetLocation(), 0.3, 2)
         m9:SetLifeSpan(1)
         Timer.SetTimeout(function(_zombie)
-          Events.BroadcastRemote("SpawnSound", Vector(0), "package://nano-survivors/Client/SFX/hit_distance.ogg", true,
+          Events.BroadcastRemote("SpawnSound", Vector(0), "package://nanos-survivors/Client/SFX/hit_distance.ogg", true,
             0.8, 1)
           local omniburst = Particle(
             _zombie:GetLocation(),
@@ -753,6 +753,271 @@ function TheWorld(character)
 end
 
 RegisterSkill("The World", "Spawn knives to hit enemies", "kitchen-knives", TheWorld)
+
+function SpeedBoost(character) 
+  character:SetWalkSpeed(character:GetWalkSpeed() * 1.2)
+  character:SetRunSpeed(character:GetRunSpeed() * 1.2)
+end
+
+RegisterSkill("Speed Boost", "Increase movement speed by 20%", "running", SpeedBoost)
+
+function CriticalHit(character)
+  character:Subscribe("TakeDamage", function(self, damage, bone, dtype, from_direction, instigator)
+    if math.random() < 0.2 then
+      return damage * 2
+    end
+  end)
+end
+
+RegisterSkill("Critical Strike", "20% chance to deal double damage", "piercing-sword", CriticalHit)
+
+function Regeneration(character)
+  Timer.SetInterval(function()
+    character:SetHealth(math.min(character:GetHealth() + 1, character:GetMaxHealth()))
+  end, 1000)
+end
+
+RegisterSkill("Regeneration", "Recover 1 HP every second", "health-increase", Regeneration)
+
+function ArmorUp(character)
+  character:SetMaxHealth(character:GetMaxHealth() * 1.25)
+  character:SetHealth(character:GetMaxHealth())
+end
+
+RegisterSkill("Armor Up", "Increase max health by 25%", "armor-upgrade", ArmorUp)
+
+function Ricochet(character)
+  local trigger = Trigger(character:GetLocation(), Rotator(), Vector(500), TriggerType.Sphere, true)
+  trigger:SetOverlapOnlyClasses({ "Character", "CharacterSimple" })
+  
+  character:Subscribe("TakeDamage", function(self, damage, bone, dtype, from_direction, instigator)
+    trigger:Subscribe("BeginOverlap", function(self, enemy)
+      if IsAZombie(enemy) and enemy ~= instigator then
+        enemy:ApplyDamage(damage * 0.5)
+        local my_particle = Particle(
+          enemy:GetLocation(),
+          Rotator(0, 0, 0),
+          "nanos-world::P_OmnidirectionalBurst",
+          true,
+          true
+        )
+      end
+    end)
+  end)
+
+  -- Update trigger position to follow character
+  Timer.SetInterval(function()
+    if character:IsValid() then
+      trigger:SetLocation(character:GetLocation())
+    else
+      trigger:Destroy()
+    end
+  end, 100)
+end
+
+RegisterSkill("Ricochet", "Damage dealt bounces to nearby enemies for 50% damage", "arrow-dunk", Ricochet)
+
+function BulletStorm(character)
+  local weapon = character:GetPicked()
+  if weapon then
+    weapon:SetSpread(weapon:GetSpread() + 5)
+    weapon:SetBulletCount(weapon:GetBulletCount() + 2)
+    weapon:SetDamage(weapon:GetDamage() * 0.8)
+  end
+end
+
+RegisterSkill("Bullet Storm", "Shoot more bullets with increased spread but less damage", "bullets", BulletStorm)
+
+function Berserk(character)
+  character:Subscribe("TakeDamage", function(self)
+    if self:GetHealth() < self:GetMaxHealth() * 0.3 then
+      local weapon = self:GetPicked()
+      if weapon then
+        weapon:SetDamage(weapon:GetDamage() * 1.5)
+      end
+    end
+  end)
+end
+
+RegisterSkill("Berserk", "Deal 50% more damage when below 30% health", "enrage", Berserk)
+
+function BlastWave(character)
+  Timer.SetInterval(function()
+    local nearby_enemies = Character.GetAll()
+    for _, enemy in ipairs(nearby_enemies) do
+      if IsAZombie(enemy) and Vector.Distance(enemy:GetLocation(), character:GetLocation()) < 300 then
+        enemy:ApplyDamage(10)
+        enemy:AddImpulse(Vector(0, 0, 500))
+      end
+    end
+    Events.BroadcastRemote("SpawnSound", character:GetLocation(), "package://nanos-survivors/Client/SFX/hit_distance.ogg", false, 1, 0.8)
+  end, 5000)
+end
+
+RegisterSkill("Blast Wave", "Periodically damage and knock back nearby enemies", "explosion-rays", BlastWave)
+
+function PiercingShots(character)
+  local weapon = character:GetPicked()
+  if weapon then
+    weapon:SetDamage(weapon:GetDamage() * 1.1)
+    weapon:Subscribe("Hit", function(self, hit_result)
+      if hit_result.Actor and IsAZombie(hit_result.Actor) then
+        local direction = hit_result.Location - self:GetLocation()
+        direction:Normalize()
+        local behind_target = hit_result.Location + direction * 100
+        local enemies = Character.GetAll()
+        for _, enemy in ipairs(enemies) do
+          if IsAZombie(enemy) and enemy ~= hit_result.Actor and Vector.Distance(enemy:GetLocation(), behind_target) < 200 then
+            enemy:ApplyDamage(self:GetDamage() * 0.5)
+          end
+        end
+      end
+    end)
+  end
+end
+
+RegisterSkill("Piercing Shots", "Bullets pierce through enemies and deal 50% damage to enemies behind", "pierced-body", PiercingShots)
+
+function RapidReload(character)
+  local weapon = character:GetPicked()
+  if weapon then
+    weapon:SetReloadTime(weapon:GetReloadTime() * 0.7)
+  end
+end
+
+RegisterSkill("Rapid Reload", "Reduce reload time by 30%", "reload", RapidReload)
+
+function LifeSteal(character)
+  local weapon = character:GetPicked()
+  if weapon then
+    weapon:Subscribe("Hit", function(self, hit_result)
+      if hit_result.Actor and IsAZombie(hit_result.Actor) then
+        character:SetHealth(math.min(character:GetHealth() + 2, character:GetMaxHealth()))
+      end
+    end)
+  end
+end
+
+RegisterSkill("Life Steal", "Recover 2 HP on each hit", "health-increase", LifeSteal)
+
+function SpeedBoost(character)
+  character:SetSpeedMultiplier(character:GetSpeedMultiplier() * 1.15)
+end
+
+RegisterSkill("Speed Boost", "Increase movement speed by 15%", "running", SpeedBoost)
+
+function CriticalHits(character)
+  local weapon = character:GetPicked()
+  if weapon then
+    weapon:Subscribe("Hit", function(self, hit_result)
+      if hit_result.Actor and IsAZombie(hit_result.Actor) and math.random() < 0.2 then
+        hit_result.Actor:ApplyDamage(self:GetDamage())
+      end
+    end)
+  end
+end
+
+RegisterSkill("Critical Hits", "20% chance to deal double damage", "sword-wound", CriticalHits)
+
+function ArmorUp(character)
+  character:Subscribe("TakeDamage", function(self, damage)
+    return damage * 0.85
+  end)
+end
+
+RegisterSkill("Armor Up", "Reduce all incoming damage by 15%", "shield", ArmorUp)
+
+function Regeneration(character)
+  Timer.SetInterval(function()
+    if character:GetHealth() < character:GetMaxHealth() then
+      character:SetHealth(math.min(character:GetHealth() + 5, character:GetMaxHealth()))
+    end
+  end, 10000)
+end
+
+RegisterSkill("Regeneration", "Recover 5 HP every 10 seconds", "health-normal", Regeneration)
+
+function SpreadShot(character)
+  local weapon = character:GetPicked()
+  if weapon and weapon:IsValid() then
+    weapon:SetSpread(weapon:GetSpread() + 5)
+    weapon:SetDamage(weapon:GetDamage() * 1.2)
+  end
+end
+
+RegisterSkill("Spread Shot", "Increase spread and damage", "bullets", SpreadShot)
+
+function Revenge(character)
+  character:Subscribe("TakeDamage", function(self, damage)
+    local weapon = self:GetPicked()
+    if weapon then
+      weapon:SetDamage(weapon:GetDamage() + (damage * 0.1))
+      Timer.SetTimeout(function()
+        weapon:SetDamage(weapon:GetDamage() / (1 + (damage * 0.1)))
+      end, 5000)
+    end
+  end)
+end
+
+RegisterSkill("Revenge", "Temporarily gain damage when hit", "sword-clash", Revenge)
+
+function Momentum(character)
+  local bonus = 1
+  Timer.SetInterval(function()
+    if character:GetVelocity():Size() > 10 then
+      bonus = math.min(bonus + 0.1, 1.5)
+    else
+      bonus = math.max(bonus - 0.1, 1)
+    end
+    local weapon = character:GetPicked()
+    if weapon then
+      weapon:SetDamage(weapon:GetBaseDamage() * bonus)
+    end
+  end, 1000)
+end
+
+RegisterSkill("Momentum", "Deal more damage while moving", "fast-forward", Momentum)
+
+function WeaponUpgrade(character)
+  local weapons = {
+    "AK47", "AK74U", "GE36", "Glock", "DesertEagle", "AR4", "Moss500", 
+    "AP5", "SMG11", "ASVal", "M1911", "Makarov", "UMP45", "P90",
+    "GE3", "AK5C", "SA80", "Ithaca37", "Rem870", "SPAS12", "AWP"
+  }
+  
+  local current_weapon = character:GetPicked()
+  if current_weapon then
+    -- Find current weapon index
+    local current_index = 1
+    for i, weapon_name in ipairs(weapons) do
+      if current_weapon:GetName():find(weapon_name) then
+        current_index = i
+        break
+      end
+    end
+    
+    -- Get next weapon, loop back to start if at end
+    local next_index = current_index % #weapons + 1
+    local next_weapon_name = weapons[next_index]
+    
+    -- Store current damage multiplier
+    local damage_mult = current_weapon:GetDamage() / current_weapon:GetBaseDamage()
+    
+    -- Remove current weapon
+    current_weapon:Destroy()
+    
+    -- Spawn and give new weapon
+    local new_weapon = _G[next_weapon_name]()
+    new_weapon:SetAmmoSettings(100000, 100000)
+    new_weapon:SetDamage(new_weapon:GetBaseDamage() * (damage_mult + 0.2))
+    character:PickUp(new_weapon)
+  end
+end
+
+RegisterSkill("Weapon Master", "Upgrade to a better weapon with increased damage", "swords-power", WeaponUpgrade)
+
+
+
 
 -- TODO: Create better algorithm
 function GetSetOfSkills()
@@ -785,9 +1050,9 @@ function GetSetOfSkills()
   set_of_skills[1] = skill_1
   set_of_skills[2] = skill_2
   set_of_skills[3] = skill_3
-  Package.Log(set_of_skills[1])
-  Package.Log(set_of_skills)
-  Package.Log(JSON.stringify(set_of_skills))
+  Console.Log(set_of_skills[1])
+  Console.Log(set_of_skills)
+  Console.Log(JSON.stringify(set_of_skills))
   return set_of_skills
   -- return JSON.stringify(set_of_skills)
 end

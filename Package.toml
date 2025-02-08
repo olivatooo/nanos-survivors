@@ -1,9 +1,9 @@
 # vault configurations
 [meta]
     # friendly name
-    title =                 "nano-survivors"
+    title =                 "nanos-survivors"
     # contributors
-    author =                "SyedMuhammad"
+    author =                "SyedMuhammad & Olivato"
     # version
     version =               "0.0.1"
 
@@ -19,12 +19,11 @@
     compatibility_version = "1.21"
     # packages requirements
     packages_requirements = [
-                            
+                            "default-weapons",
     ]
     # asset packs requirements
     assets_requirements = [
-                            "zombie-pack-v1",
-                            "zombies-voice-sfx",
+                            
     ]
     # compatible maps - maps to be highlighted when starting a new game through main menu
     compatible_maps = [

@@ -1,62 +1,380 @@
 <html>
-  <head>
-    <!-- Includes all files we created (JS and CSS) -->
-    <script src="index.js"></script>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+
+<head>
+</head>
+
+<body>
     <div id="xp">
-      <div id="xp-fill"></div>
-      <span id="level"> Level 1 </span>
+        <div id="xp-fill"></div>
+        <span id="level"> Level 1 </span>
     </div>
     <div id="time">10:00</div>
 
     <!-- HEALTH DISPLAY -->
     <div id="health-container">
-      <span id="health"></span>
-      <span id="health"></span>
-      <span id="health-empty"></span>
+        <img src="Images/heart.webp" class="health-icon" />
+        <span id="health">100</span>
     </div>
 
     <!-- LEVEL UP SCREEN -->
     <div class="container center hidden" id="level-up">
-      <div class="section">
-        <center>
-          <h2 id="skill_name_0">Skill Name</h2>
-          <br />
-          <span id="skill_desc_0">Skill description</span>
-          <br />
-          <br />
-          <img class="icon" id="skill_icon_0" src="Images/icons/abstract-001.png" />
-          <h3>Press 1 to buy this skill</h3>
-        </center>
-      </div>
+        <div class="section">
+            <center>
+                <h2 id="skill_name_0">Skill Name</h2>
+                <br />
+                <span id="skill_desc_0">Skill description</span>
+                <br />
+                <br />
+                <img class="icon" id="skill_icon_0" src="Images/icons/abstract-001.png" />
+                <h3 class="skill-prompt">Press 1 to buy this skill</h3>
+            </center>
+        </div>
 
-      <div class="section">
-        <center>
-          <h2 id="skill_name_1">Skill Name</h2>
-          <br />
-          <span id="skill_desc_1">Skill description</span>
-          <br />
-          <br />
-          <img class="icon" id="skill_icon_1" src="https://cdn-icons-png.flaticon.com/512/3380/3380934.png" />
-          <h3>Press 2 to buy this skill</h3>
-        </center>
-      </div>
+        <div class="section">
+            <center>
+                <h2 id="skill_name_1">Skill Name</h2>
+                <br />
+                <span id="skill_desc_1">Skill description</span>
+                <br />
+                <br />
+                <img class="icon" id="skill_icon_1" src="https://cdn-icons-png.flaticon.com/512/3380/3380934.png" />
+                <h3 class="skill-prompt">Press 2 to buy this skill</h3>
+            </center>
+        </div>
 
-      <div class="section">
-        <center>
-          <h2 id="skill_name_2">Skill Name</h2>
-          <br />
-          <span id="skill_desc_2">Skill description</span>
-          <br />
-          <br />
-          <img class="icon" id="skill_icon_2" src="https://cdn-icons-png.flaticon.com/512/3380/3380934.png" />
-          <h3>Press 3 to buy this skill</h3>
-        </center>
-      </div>
+        <div class="section">
+            <center>
+                <h2 id="skill_name_2">Skill Name</h2>
+                <br />
+                <span id="skill_desc_2">Skill description</span>
+                <br />
+                <br />
+                <img class="icon" id="skill_icon_2" src="https://cdn-icons-png.flaticon.com/512/3380/3380934.png" />
+                <h3 class="skill-prompt">Press 3 to buy this skill</h3>
+            </center>
+        </div>
+    </div>
+
+    <!-- PLAYER LIST -->
+    <div id="player-list">
+        <div class="player-list-container">
+            <!-- Players will be added here dynamically -->
+        </div>
     </div>
 
     <div id="ammo-container"><img src="Images/bullets.webp" /><span id="ammo">003/006</span></div>
-  </body>
+    <script>
+        Events.Subscribe("UpdateXP", function(current_xp, max_xp) {
+            document.getElementById("xp-fill").style.width = `${Math.round((current_xp / max_xp) * 100)}%`;
+        });
+
+        Events.Subscribe("UpdateLevel", function(level) {
+            const levelEl = document.getElementById("level");
+            levelEl.classList.add("number-change");
+            levelEl.innerHTML = `Level ${level}`;
+            setTimeout(() => levelEl.classList.remove("number-change"), 500);
+        });
+
+        Events.Subscribe("UpdateHealth", function(health) {
+            const healthEl = document.getElementById("health");
+            healthEl.classList.add("number-change");
+            healthEl.innerHTML = health;
+            setTimeout(() => healthEl.classList.remove("number-change"), 500);
+        });
+
+        Events.Subscribe("UpdateAmmo", function(current, max) {
+            const ammoEl = document.getElementById("ammo");
+            ammoEl.classList.add("number-change");
+            ammoEl.innerHTML = `${current.toString().padStart(3, '0')}/${max.toString().padStart(3, '0')}`;
+            setTimeout(() => ammoEl.classList.remove("number-change"), 500);
+        });
+
+        Events.Subscribe("UpdatePlayers", function(players) {
+            const container = document.querySelector('.player-list-container');
+            container.innerHTML = '';
+            players.forEach(player => {
+                const playerEl = document.createElement('div');
+                playerEl.className = 'player-item';
+                playerEl.innerHTML = `
+                    <img src="${player.icon}" class="player-icon" />
+                    <span class="player-name">${player.name}</span>
+                `;
+                container.appendChild(playerEl);
+            });
+        });
+
+        function ShowSkillList() {
+            var level_up_options = document.getElementById("level-up");
+            level_up_options.classList.remove("hidden");
+        }
+
+        function HideSkillList() {
+            var level_up_options = document.getElementById("level-up");
+            level_up_options.classList.add("hidden");
+        }
+
+        Events.Subscribe("LevelUpSkills", function(skills) {
+            ShowSkillList();
+            let skill_list = JSON.parse(skills);
+            for (let i = 0; i < skill_list.length; i++) {
+                // Iterate all skills and show
+                let skill_title = skill_list[i].Title;
+                let description = skill_list[i].Description;
+                let skill_icon = skill_list[i].Icon;
+
+                document.getElementById("skill_name_" + i).innerHTML = skill_title;
+                document.getElementById("skill_desc_" + i).innerHTML = description;
+                const iconEl = document.getElementById("skill_icon_" + i);
+                iconEl.classList.add("icon-change");
+                iconEl.src = "Images/icons/" + skill_icon + ".png";
+                setTimeout(() => iconEl.classList.remove("icon-change"), 500);
+            }
+        });
+
+        Events.Subscribe("SelectedSkill", function() {
+            HideSkillList();
+        });
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: "Lucida Console";
+            margin: 10px;
+            color: rgb(207, 207, 207);
+        }
+        
+        div#xp {
+            height: 50px;
+            background-color: #13222f;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        div#xp-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #3d553a;
+            border-radius: 5px;
+            position: relative;
+            transition: width 0.3s ease-in-out;
+        }
+        
+        span#level {
+            position: absolute;
+            top: 0;
+            margin: 10px;
+            text-align: center;
+            width: 100%;
+            line-height: 30px;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        
+        div#time {
+            margin-top: 10px;
+            font-size: 25px;
+            float: right;
+        }
+        
+        div#health-container {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .health-icon {
+            height: 50px;
+            width: 50px;
+            animation: pulse 2s infinite;
+        }
+        
+        #health {
+            font-size: 30px;
+            font-weight: bold;
+        }
+        
+        div#ammo-container {
+            margin-top: 10px;
+        }
+        
+        div#ammo-container img {
+            height: 40px;
+            margin: 0 10px 0 5px;
+            vertical-align: middle;
+            filter: brightness(0.8);
+            transition: transform 0.3s ease;
+        }
+        
+        div#ammo-container img:hover {
+            transform: scale(1.1);
+        }
+        
+        span#ammo {
+            font-size: 30px;
+            vertical-align: middle;
+        }
+        
+        .center {
+            margin: auto;
+            width: 50%;
+            padding: 10px;
+        }
+        
+        .column {
+            float: left;
+            width: 33.33%;
+            padding: 10px;
+        }
+        
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        #level-up {
+            height: 300px;
+            position: fixed;
+            bottom: 0;
+            left: 25%;
+        }
+        /* Player List Styles */
+        
+        #player-list {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(19, 34, 47, 0.8);
+            border-radius: 5px;
+            padding: 10px;
+            max-width: 250px;
+        }
+        
+        .player-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .player-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .player-icon {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .player-name {
+            color: #cfcfcf;
+            font-size: 16px;
+        }
+        
+        .container {
+            display: flex;
+        }
+        
+        .section {
+            flex: 1;
+            border: 1px dashed;
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+        }
+        
+        .icon {
+            height: 64px;
+            transition: transform 0.3s ease;
+        }
+        
+        .icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .skill-prompt {
+            animation: glowPulse 2s infinite;
+            text-shadow: 0 0 10px #4CAF50;
+        }
+        
+        @keyframes glowPulse {
+            0% {
+                color: rgb(207, 207, 207);
+                transform: scale(1);
+            }
+            50% {
+                color: #4CAF50;
+                transform: scale(1.1);
+            }
+            100% {
+                color: rgb(207, 207, 207);
+                transform: scale(1);
+            }
+        }
+        /* Animations */
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes numberChange {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+                color: #4CAF50;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes iconChange {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.2);
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+        
+        .number-change {
+            animation: numberChange 0.5s ease;
+        }
+        
+        .icon-change {
+            animation: iconChange 0.5s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</body>
+
 </html>
